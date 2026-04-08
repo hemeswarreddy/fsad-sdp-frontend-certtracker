@@ -56,6 +56,27 @@
   letter-spacing: -0.01em;
 }
 
+.footer-brand-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f6fbff;
+  background: linear-gradient(135deg, #2f78b2, #63cba7);
+  box-shadow: 0 10px 20px rgba(47, 120, 178, 0.2);
+}
+
 .footer-brand-col p {
   margin: 12px 0 16px;
   color: #a5b8d6;
@@ -200,4 +221,40 @@
   .footer-legal-links {
     gap: 10px;
   }
+}
+
+[data-theme='light'] .footer-premium {
+  color: #20364f;
+  border-top-color: rgba(184, 169, 149, 0.2);
+  background:
+    radial-gradient(50rem 18rem at 8% -12%, rgba(83, 199, 255, 0.12), transparent 50%),
+    linear-gradient(180deg, rgba(250, 245, 237, 0.96), rgba(241, 232, 220, 0.98));
+}
+
+[data-theme='light'] .footer-topline,
+[data-theme='light'] .footer-grid {
+  background: linear-gradient(145deg, rgba(255, 252, 247, 0.97), rgba(248, 242, 234, 0.93));
+  border-color: rgba(184, 169, 149, 0.2);
+}
+
+[data-theme='light'] .footer-brand-col p,
+[data-theme='light'] .footer-contact-col,
+[data-theme='light'] .footer-topline {
+  color: #6b6357;
+}
+
+[data-theme='light'] .footer-brand-mark {
+  color: #17314c;
+  background: linear-gradient(135deg, #f4d6ab, #8fd3be);
+  box-shadow: 0 10px 20px rgba(106, 88, 69, 0.15);
+}
+
+[data-theme='light'] .footer-links a,
+[data-theme='light'] .footer-legal-links a {
+  color: #4b5f79;
+}
+
+[data-theme='light'] .footer-bottom {
+  border-top-color: rgba(184, 169, 149, 0.2);
+  color: #6a5f52;
 }

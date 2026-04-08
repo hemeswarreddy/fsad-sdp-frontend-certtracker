@@ -12,7 +12,10 @@ const Footer = () => {
 
         <div className="footer-grid">
           <div className="footer-brand-col">
-            <h3>Certification Tracker</h3>
+            <h3 className="footer-brand-title">
+              <span className="footer-brand-mark" aria-hidden="true">CT</span>
+              Certification Tracker
+            </h3>
             <p>
               Your trusted platform for managing professional certifications and
               compliance journeys.

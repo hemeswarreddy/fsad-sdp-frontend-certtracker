@@ -60,6 +60,9 @@ const ViewAllUsers = () => {
       <AdminNavBar />
       <div className="admin-shell">
         <h1 className="admin-title">All Users</h1>
+        <p className="admin-section-note">
+          Review registered accounts, search by name or ID, and keep the user list organized.
+        </p>
         
         {/* Search Box */}
         <div className="admin-search-wrap">
@@ -76,6 +79,10 @@ const ViewAllUsers = () => {
           <LoadingSpinner />
         ) : (
           <div className="admin-table-wrap">
+            <div className="admin-table-meta">
+              <span className="admin-table-chip">{filteredUsers.length} records</span>
+              <span className="admin-table-chip admin-table-chip-soft">Managed users</span>
+            </div>
             <table className="admin-table">
               <thead>
                 <tr>

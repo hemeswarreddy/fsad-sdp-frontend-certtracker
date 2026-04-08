@@ -51,6 +51,9 @@ const ViewAllCertificates = () => {
       <AdminNavBar />
       <div className="admin-shell">
         <h1 className="admin-title">All Certificates</h1>
+        <p className="admin-section-note">
+          Review certificate records, search by certificate or user, and keep expiry data easy to scan.
+        </p>
         
         <div className="admin-search-wrap">
           <input 
@@ -66,6 +69,10 @@ const ViewAllCertificates = () => {
           <LoadingSpinner />
         ) : (
           <div className="admin-table-wrap">
+            <div className="admin-table-meta">
+              <span className="admin-table-chip">{filteredCerts.length} records</span>
+              <span className="admin-table-chip admin-table-chip-soft">Certificate registry</span>
+            </div>
             <table className="admin-table">
               <thead>
                 <tr>
