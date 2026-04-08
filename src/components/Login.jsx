@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { login as loginAPI, adminLogin as adminLoginAPI } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 const generateCaptcha = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
@@ -15,6 +17,8 @@ const Login = ({ onBack }) => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [captcha, setCaptcha] = useState(generateCaptcha());
   const [captchaInput, setCaptchaInput] = useState('');
   const canvasRef = useRef(null);
@@ -85,26 +89,24 @@ const Login = ({ onBack }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (captchaInput !== captcha) {
       setMessage('Incorrect CAPTCHA. Please try again.');
       refreshCaptcha();
       return;
     }
+
     try {
-      const response = await axios.post('http://localhost:2006/auth/login', {
-        username,
-        password
-      });
-      
-      const responseMessage = response.data;
-      
-      // Check if response matches selected role
-      if (role === 'admin' && responseMessage.includes('User')) {
-        setMessage('Invalid Admin Credentials');
-      } else if (role === 'user' && responseMessage.includes('Admin')) {
-        setMessage('Invalid User Credentials');
+      if (role === 'admin') {
+        const data = await adminLoginAPI(username, password);
+        login({ username }, 'admin', null);
+        setMessage('Login Successful');
+        setTimeout(() => navigate('/admin/home'), 1000);
       } else {
-        setMessage(responseMessage);
+        const data = await loginAPI(username, password);
+        login({ username }, 'user', data.token);
+        setMessage('Login Successful');
+        setTimeout(() => navigate('/user/home'), 1000);
       }
     } catch (error) {
       setMessage(error.response?.data || 'Login failed');

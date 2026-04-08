@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login as loginAPI } from '../api/auth';
+import { login as loginAPI, adminLogin as adminLoginAPI } from '../api/auth';
 import { getUserByUsername } from '../api/user';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -97,30 +97,26 @@ const Login = () => {
       return;
     }
     try {
-      const response = await loginAPI(username, password);
-      const responseMessage = response;
-
-      if (role === 'admin' && responseMessage.includes('User')) {
-        toast.error('Invalid Admin Credentials');
-      } else if (role === 'user' && responseMessage.includes('Admin')) {
-        toast.error('Invalid User Credentials');
+      if (role === 'admin') {
+        await adminLoginAPI(username, password);
+        sessionStorage.setItem('token', '');
+        sessionStorage.setItem('role', 'ADMIN');
+        login({ username }, 'admin', null);
       } else {
-        // Fetch user details to get the ID
-        if (role === 'user') {
-          try {
-            const userDetails = await getUserByUsername(username);
-            login(userDetails, role);
-          } catch (error) {
-            login({ username }, role);
-          }
-        } else {
-          login({ username }, role);
+        const data = await loginAPI(username, password);
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('role', data.role);
+        try {
+          const userDetails = await getUserByUsername(username);
+          login(userDetails, 'user', data.token);
+        } catch {
+          login({ username }, 'user', data.token);
         }
-        toast.success(responseMessage);
-        setTimeout(() => {
-          navigate(role === 'admin' ? '/admin/home' : '/user/home');
-        }, 1000);
       }
+      toast.success('Login successful!');
+      setTimeout(() => {
+        navigate(role === 'admin' ? '/admin/home' : '/user/home');
+      }, 1000);
     } catch (error) {
       toast.error(error.response?.data || 'Login failed');
     }
