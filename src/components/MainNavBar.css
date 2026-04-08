@@ -44,15 +44,15 @@
 }
 
 .main-navbar-btn-login {
-  background: linear-gradient(135deg, #2f9fd6, #4fb8e9);
-  color: #041a2b;
-  box-shadow: 0 8px 18px rgba(79, 184, 233, 0.28);
+  background: linear-gradient(135deg, #2f78b2, #3e8ac7);
+  color: #eef6ff;
+  box-shadow: 0 8px 18px rgba(47, 120, 178, 0.24);
 }
 
 .main-navbar-btn-register {
-  background: linear-gradient(135deg, #5aae4d, #7ccf6d);
-  color: #0f2411;
-  box-shadow: 0 8px 18px rgba(124, 207, 109, 0.24);
+  background: linear-gradient(135deg, #3f8a62, #5ea57a);
+  color: #edf7f1;
+  box-shadow: 0 8px 18px rgba(63, 138, 98, 0.24);
 }
 
 @media (max-width: 600px) {

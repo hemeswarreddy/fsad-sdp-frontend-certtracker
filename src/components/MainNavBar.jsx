@@ -5,7 +5,7 @@ const MainNavBar = () => {
   return (
     <nav className="main-navbar">
       <Link to="/" className="main-navbar-brand">
-        🎓 CertTracker
+        CertTracker
       </Link>
       <div className="main-navbar-actions">
         <Link to="/login" className="main-navbar-btn main-navbar-btn-login">

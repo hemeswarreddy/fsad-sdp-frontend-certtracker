@@ -15,6 +15,7 @@
   background:
     radial-gradient(70rem 50rem at -10% -10%, rgba(83, 199, 255, 0.14), transparent 50%),
     radial-gradient(80rem 54rem at 110% 8%, rgba(123, 227, 163, 0.12), transparent 50%),
+    radial-gradient(56rem 34rem at 52% 118%, rgba(182, 136, 255, 0.1), transparent 60%),
     linear-gradient(180deg, #060a12 0%, #0a111f 48%, #090f1c 100%);
   position: relative;
 }
@@ -193,7 +194,12 @@
 }
 
 .home-hero-checks span::before {
-  content: '?';
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--home-highlight);
   color: var(--home-highlight);
   font-weight: 700;
 }
