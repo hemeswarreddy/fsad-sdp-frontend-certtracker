@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNavBar from '../components/MainNavBar';
 import Footer from '../components/Footer';
+import { getAllCertificates, getAllUsers } from '../api/admin';
 import './Home.css';
 import certCloud from '../assets/certificate-cloud.svg';
 import certCyber from '../assets/certificate-cyber.svg';
@@ -9,6 +10,20 @@ import certData from '../assets/certificate-data.svg';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    users: null,
+    certificates: null,
+    validCertificates: null,
+    expiredCertificates: null,
+  });
+
+  const formatCompact = (value) => {
+    if (value === null || value === undefined) return 'N/A';
+    return new Intl.NumberFormat('en', {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(value);
+  };
 
   useEffect(() => {
     const revealElements = document.querySelectorAll('[data-reveal]');
@@ -30,6 +45,49 @@ const Home = () => {
     revealElements.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const fetchLandingStats = async () => {
+      const [usersResult, certificatesResult] = await Promise.allSettled([
+        getAllUsers(),
+        getAllCertificates(),
+      ]);
+
+      let validCertificatesCount = null;
+      let expiredCertificatesCount = null;
+      if (certificatesResult.status === 'fulfilled' && Array.isArray(certificatesResult.value)) {
+        const today = new Date();
+        validCertificatesCount = certificatesResult.value.filter((cert) => {
+          if (!cert?.expiryDate) return false;
+          const expiry = new Date(cert.expiryDate);
+          if (Number.isNaN(expiry.getTime())) return false;
+          return expiry >= today;
+        }).length;
+
+        expiredCertificatesCount = certificatesResult.value.filter((cert) => {
+          if (!cert?.expiryDate) return false;
+          const expiry = new Date(cert.expiryDate);
+          if (Number.isNaN(expiry.getTime())) return false;
+          return expiry < today;
+        }).length;
+      }
+
+      const nextStats = {
+        users: usersResult.status === 'fulfilled' && Array.isArray(usersResult.value)
+          ? usersResult.value.length
+          : null,
+        certificates: certificatesResult.status === 'fulfilled' && Array.isArray(certificatesResult.value)
+          ? certificatesResult.value.length
+          : null,
+        validCertificates: validCertificatesCount,
+        expiredCertificates: expiredCertificatesCount,
+      };
+
+      setStats(nextStats);
+    };
+
+    fetchLandingStats();
   }, []);
 
   const handleCertificateMouseMove = (event) => {
@@ -66,7 +124,13 @@ const Home = () => {
         <div className="home-ambient home-ambient-left" aria-hidden="true" />
         <div className="home-ambient home-ambient-right" aria-hidden="true" />
         <div className="home-container home-hero-content">
-          <div className="home-trust-badge">Trusted by 10,000+ Professionals</div>
+          {(stats.users !== null || stats.certificates !== null) && (
+            <div className="home-trust-badge">
+              {stats.users !== null ? `${formatCompact(stats.users)} active users` : ''}
+              {stats.users !== null && stats.certificates !== null ? ' • ' : ''}
+              {stats.certificates !== null ? `${formatCompact(stats.certificates)} certifications tracked` : ''}
+            </div>
+          )}
           <h1>Track and Manage Your Professional Certifications</h1>
           <p>
             Stay organized and never miss a certification renewal. Keep your career
@@ -89,20 +153,20 @@ const Home = () => {
       <section className="home-stats-wrap" data-reveal>
         <div className="home-container home-stats-grid">
           <div className="home-stat-card">
-            <div className="home-stat-value">10K+</div>
+            <div className="home-stat-value">{formatCompact(stats.users)}</div>
             <div className="home-stat-label">Active Users</div>
           </div>
           <div className="home-stat-card">
-            <div className="home-stat-value">50K+</div>
+            <div className="home-stat-value">{formatCompact(stats.certificates)}</div>
             <div className="home-stat-label">Certifications Tracked</div>
           </div>
           <div className="home-stat-card">
-            <div className="home-stat-value">99.9%</div>
-            <div className="home-stat-label">Uptime</div>
+            <div className="home-stat-value">{stats.validCertificates ?? 'N/A'}</div>
+            <div className="home-stat-label">Valid Certificates</div>
           </div>
           <div className="home-stat-card">
-            <div className="home-stat-value">24/7</div>
-            <div className="home-stat-label">Support</div>
+            <div className="home-stat-value">{stats.expiredCertificates ?? 'N/A'}</div>
+            <div className="home-stat-label">Expired Certificates</div>
           </div>
         </div>
       </section>

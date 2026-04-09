@@ -1,21 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserNavBar from './UserNavBar';
-import { updateUserProfile } from '../api/user';
+import { getUserByUsername, updateUserProfile } from '../api/user';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import './UserTheme.css';
 
 const UserProfile = () => {
   const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState({
+    id: user?.id || '',
+    name: user?.name || '',
+    gender: user?.gender || '',
+    email: user?.email || '',
+    username: user?.username || '',
+    Contact: user?.Contact || user?.contact || ''
+  });
   const [formData, setFormData] = useState({
     id: user?.id || '',
-    name: '',
-    gender: '',
-    email: '',
-    username: user?.username || '',
-    password: '',
-    Contact: ''
+    name: user?.name || '',
+    Contact: user?.Contact || user?.contact || ''
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user?.username) return;
+      try {
+        const data = await getUserByUsername(user.username);
+        setProfileData({
+          id: data?.id || user?.id || '',
+          name: data?.name || '',
+          gender: data?.gender || '',
+          email: data?.email || '',
+          username: data?.username || user?.username || '',
+          Contact: data?.Contact || data?.contact || ''
+        });
+        setFormData({
+          id: data?.id || user?.id || '',
+          name: data?.name || '',
+          Contact: data?.Contact || data?.contact || ''
+        });
+      } catch (error) {
+        setProfileData({
+          id: user?.id || '',
+          name: user?.name || '',
+          gender: user?.gender || '',
+          email: user?.email || '',
+          username: user?.username || '',
+          Contact: user?.Contact || user?.contact || ''
+        });
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +62,14 @@ const UserProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await updateUserProfile(formData);
+      const payload = {
+        id: formData.id,
+        name: formData.name,
+        Contact: formData.Contact
+      };
+      const response = await updateUserProfile(payload);
+      setProfileData((prev) => ({ ...prev, ...payload }));
+      setIsEditing(false);
       toast.success(response);
     } catch (error) {
       toast.error(error.response?.data || 'Update failed');
@@ -35,46 +80,68 @@ const UserProfile = () => {
     <div className="user-page user-page-profile">
       <UserNavBar />
       <div className="user-shell user-form-wrap">
-        <h1 className="user-title">Update Profile</h1>
-        <p className="user-subtitle">Keep your account profile current for accurate communication and account security.</p>
+        <h1 className="user-title">My Profile</h1>
+        <p className="user-subtitle">View your details first, then update only the allowed fields when needed.</p>
         <div className="user-card user-form-card user-form-card-profile">
-          <form onSubmit={handleSubmit}>
-            <div className="user-form-section-title">Personal Details</div>
-            <div className="user-field">
-              <label>Full Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required className="user-input" />
+          {!isEditing ? (
+            <div>
+              <div className="user-form-section-title">Profile Details</div>
+              <div className="user-field">
+                <label>Full Name</label>
+                <p>{profileData.name || '-'}</p>
+              </div>
+              <div className="user-field">
+                <label>Gender</label>
+                <p>{profileData.gender || '-'}</p>
+              </div>
+              <div className="user-field">
+                <label>Email</label>
+                <p>{profileData.email || '-'}</p>
+              </div>
+              <div className="user-field">
+                <label>Username</label>
+                <p>{profileData.username || '-'}</p>
+              </div>
+              <div className="user-field">
+                <label>Contact Number</label>
+                <p>{profileData.Contact || '-'}</p>
+              </div>
+              <button type="button" onClick={() => setIsEditing(true)} className="user-btn user-btn-primary user-btn-block">
+                Update Profile
+              </button>
             </div>
-            <div className="user-field">
-              <label>Gender</label>
-              <select name="gender" value={formData.gender} onChange={handleChange} required className="user-input">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div className="user-form-section-title">Account Details</div>
-            <div className="user-field">
-              <label>Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleChange} required className="user-input" />
-            </div>
-            <div className="user-field">
-              <label>Username</label>
-              <input type="text" name="username" value={formData.username} onChange={handleChange} required className="user-input" />
-            </div>
-            <div className="user-field">
-              <label>Password</label>
-              <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Leave blank to keep current password" className="user-input" />
-            </div>
-            <div className="user-field">
-              <label>Contact Number</label>
-              <input type="text" name="Contact" value={formData.Contact} onChange={handleChange} required className="user-input" />
-            </div>
-            <button type="submit" className="user-btn user-btn-primary user-btn-block">
-              Update Profile
-            </button>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="user-form-section-title">Editable Details</div>
+              <div className="user-field">
+                <label>Full Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="user-input" />
+              </div>
+              <div className="user-field">
+                <label>Contact Number</label>
+                <input type="text" name="Contact" value={formData.Contact} onChange={handleChange} required className="user-input" />
+              </div>
+              <div className="user-btn-row">
+                <button type="submit" className="user-btn user-btn-primary user-cert-action-btn">
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({
+                      id: profileData.id,
+                      name: profileData.name,
+                      Contact: profileData.Contact
+                    });
+                    setIsEditing(false);
+                  }}
+                  className="user-btn user-btn-secondary user-cert-action-btn"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

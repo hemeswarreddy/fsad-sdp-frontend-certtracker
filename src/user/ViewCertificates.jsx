@@ -83,7 +83,6 @@ const ViewCertificates = () => {
                     <h3 className="user-cert-preview-title">{cert.certName}</h3>
                     <div className="user-cert-preview-divider" />
                     <p className="user-cert-preview-meta">Issued by {cert.orgName}</p>
-                    <span className="user-cert-preview-badge">Verified</span>
                   </div>
 
                   <div className="user-cert-body">
