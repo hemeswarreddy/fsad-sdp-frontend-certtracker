@@ -16,6 +16,7 @@ import PageNotFound from './pages/PageNotFound';
 import AdminHome from './admin/AdminHome';
 import ViewAllUsers from './admin/ViewAllUsers';
 import ViewAllCertificates from './admin/ViewAllCertificates';
+import ExpiringCertificates from './admin/ExpiringCertificates';
 
 // User
 import UserHome from './user/UserHome';
@@ -53,6 +54,7 @@ function App() {
           <Route path="/admin/home" element={<PrivateRoute allowedRole="admin"><AdminHome /></PrivateRoute>} />
           <Route path="/admin/users" element={<PrivateRoute allowedRole="admin"><ViewAllUsers /></PrivateRoute>} />
           <Route path="/admin/certificates" element={<PrivateRoute allowedRole="admin"><ViewAllCertificates /></PrivateRoute>} />
+          <Route path="/admin/expiring-certificates" element={<PrivateRoute allowedRole="admin"><ExpiringCertificates /></PrivateRoute>} />
 
           {/* User Routes */}
           <Route path="/user/home" element={<PrivateRoute allowedRole="user"><UserHome /></PrivateRoute>} />

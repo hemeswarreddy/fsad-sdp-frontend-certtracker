@@ -21,6 +21,7 @@ const AdminNavBar = () => {
         <Link to="/admin/home" className="admin-nav-link">Home</Link>
         <Link to="/admin/users" className="admin-nav-link">View All Users</Link>
         <Link to="/admin/certificates" className="admin-nav-link">View All Certificates</Link>
+        <Link to="/admin/expiring-certificates" className="admin-nav-link">Expiring Certificates</Link>
         <button onClick={handleLogout} className="admin-nav-logout">Logout</button>
       </div>
     </nav>
