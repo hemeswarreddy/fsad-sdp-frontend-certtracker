@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const axiosClient = axios.create({ baseURL: 'http://localhost:2006' })
+const axiosClient = axios.create({ baseURL: 'https://certracker.up.railway.app' })
 
 axiosClient.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token')
