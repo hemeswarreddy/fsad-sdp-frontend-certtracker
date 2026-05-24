@@ -131,7 +131,7 @@ const Home = () => {
               {stats.certificates !== null ? `${formatCompact(stats.certificates)} certifications tracked` : ''}
             </div>
           )}
-          <h1>Track and Manage Your Professional Certifications</h1>
+          <h1>Sorry for the interruption backend is Down</h1>
           <p>
             Stay organized and never miss a certification renewal. Keep your career
             credentials up-to-date with our intelligent tracking platform.
